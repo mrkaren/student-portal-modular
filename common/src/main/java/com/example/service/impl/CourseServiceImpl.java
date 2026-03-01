@@ -1,0 +1,42 @@
+package com.example.service.impl;
+
+import com.example.model.Course;
+import com.example.repository.CourseRepository;
+import com.example.service.CourseService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Primary
+@Slf4j
+public class CourseServiceImpl implements CourseService {
+
+    private final CourseRepository courseRepository;
+
+    @Override
+    public List<Course> findAll() {
+        log.info("Fetching all courses");
+        return courseRepository.findAll();
+    }
+
+    @Override
+    public Course save(Course course) {
+        return courseRepository.save(course);
+    }
+
+    @Override
+    public Course findById(Integer id) {
+        return courseRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        courseRepository.deleteById(id);
+    }
+
+}
