@@ -12,4 +12,5 @@ public interface UserService {
     Optional<User> findByUsername(String username);
 
 
+    boolean verifyUser(String email, String verifyCode);
 }

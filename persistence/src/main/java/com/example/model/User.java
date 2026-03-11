@@ -26,6 +26,9 @@ public class User {
     private String surname;
     private String username;
     private String password;
+    private boolean enabled;
+    private String verificationCode;
+
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 

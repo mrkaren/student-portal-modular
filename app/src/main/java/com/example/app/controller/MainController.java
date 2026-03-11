@@ -69,7 +69,22 @@ public class MainController {
         }
         registeredUser.setPassword(passwordEncoder.encode(registeredUser.getPassword()));
         userService.save(registeredUser);
-        return "redirect:/loginPage?msg=Registration successful, pls login!";
+        return "redirect:/user/verify?email=" + registeredUser.getUsername();
+    }
+
+    @GetMapping("/user/verify")
+    public String verifyUserPage(@RequestParam("email") String email, ModelMap modelMap) {
+        modelMap.addAttribute("email", email);
+        return "verifyUser";
+    }
+
+    @PostMapping("/user/verify")
+    public String verifyUser(@RequestParam("email") String email, @RequestParam("verifyCode") String verifyCode) {
+        boolean isVerified = userService.verifyUser(email, verifyCode);
+        if (isVerified) {
+            return "redirect:/loginPage?msg=User verified successfully, pls Login!";
+        }
+        return "redirect:/loginPage?msg=Verification code is invalid!";
     }
 
     @GetMapping("/image/get")

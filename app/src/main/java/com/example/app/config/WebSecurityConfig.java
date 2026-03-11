@@ -22,6 +22,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/",
                                         "/login",
                                         "/loginPage",
+                                        "/user/verify",
                                         "/registerPage",
                                         "/register",
                                         "/css/**",

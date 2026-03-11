@@ -3,25 +3,36 @@ package com.example.service.impl;
 import com.example.model.User;
 import com.example.repository.UserRepository;
 import com.example.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final SendEmailService sendEmailService;
+    private final Random random = new Random();
 
     @Override
     public void save(User user) {
+        user.setEnabled(false);
+        String verificationCode = generateVerificationCode();
+        user.setVerificationCode(verificationCode);
         userRepository.save(user);
         if (user.getUsername().contains("@")) {
-            sendEmailService.sendMail(user.getUsername(),
-                    "Welcome to our platform",
-                    "You have successfully registered. please login http://localhost:8081/loginPage");
+            try {
+                sendEmailService.sendVerificationMailHtml(user.getUsername(),
+                         verificationCode);
+            } catch (MessagingException e) {
+                log.error("Error sending email: {}", e.getMessage());
+            }
         }
     }
 
@@ -29,4 +40,22 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    @Override
+    public boolean verifyUser(String email, String verifyCode) {
+        Optional<User> user = userRepository.findByUsername(email);
+        if (user.isPresent() && user.get().getVerificationCode().equals(verifyCode)) {
+            user.get().setVerificationCode(null);
+            user.get().setEnabled(true);
+            userRepository.save(user.get());
+            return true;
+        }
+        return false;
+    }
+
+    private String generateVerificationCode() {
+        int code = random.nextInt(1000, 9999);
+        return String.valueOf(code);
+    }
+
 }
