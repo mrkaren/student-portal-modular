@@ -18,7 +18,7 @@
             <column name="password" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="enum('ADMIN', 'USER')" defaultValue="USER">
+            <column name="role" type="varchar(255)" defaultValue="USER">
                 <constraints nullable="false"/>
             </column>
 
